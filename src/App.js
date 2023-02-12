@@ -1,23 +1,45 @@
-import logo from './logo.svg';
+import { Col, Skeleton } from 'antd';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { getPokemonsWithDetails, setLoading } from './actions';
+import { getPokemon } from './api';
 import './App.css';
+import PokemonList from './components/PokemonList';
+import Searcher from './components/Searcher';
+import pokemonLogo from './statics/pokemonLogo.png';
 
 function App() {
+
+  const pokemons = useSelector(state => state.pokemons);
+  const loading = useSelector(state => state.loading)
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const fetchPokemons = async () => {
+      dispatch(setLoading(true));
+      const pokemonsRes = await getPokemon();
+      dispatch(getPokemonsWithDetails(pokemonsRes));
+      dispatch(setLoading(false))
+    };
+
+    fetchPokemons();
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className='App'>
+      <Col span={4} offset={10}>
+        <img src={pokemonLogo} alt="logo-pokemon" />
+      </Col>
+      <Col span={8} offset={8}>
+        <Searcher />
+      </Col>
+      {loading ? (
+        <Col span={12} offset={2} >
+          <Skeleton loading size='large' />
+        </Col>
+      ) : (
+        <PokemonList pokemons={pokemons} />
+      )}
     </div>
   );
 }
