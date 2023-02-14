@@ -8,8 +8,9 @@ export const featuring = (store) => (next) => (actionInfo) => {
   const updateActionInfo = {
     ...actionInfo,
     action: {
-      ...actionInfo.action, payload: featured
-    }
+      ...actionInfo.action,
+      payload: featured
+    },
   };
   next(updateActionInfo);
-}
+};
